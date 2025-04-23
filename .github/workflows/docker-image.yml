@@ -1,0 +1,43 @@
+name: Build and Push Docker Image
+
+on:
+  push:
+    branches:
+      - main
+
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          ref: main
+
+      - name: Log in to GitHub Container Registry
+        uses: docker/login-action@v1
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.BE_GH_REGISTRY_KEY }}
+
+      - name: Build Docker image
+        run: |
+          docker build -t service-find-calendar-slot .
+
+      - name: Tag Docker image
+        run: |
+          docker tag service-find-calendar-slot ghcr.io/symbiosika/service-find-calendar-slot:1
+
+      - name: Push Docker image
+        run: |
+          docker push ghcr.io/symbiosika/service-find-calendar-slot:1
+          
+      # - name: Trigger Coolify Deployment
+      #   run: |
+      #     curl -X POST "https://coolify.perlecto.de/api/v1/deploy?uuid=${{ secrets.COOLIFY_PROJECT_ID_SERVICE_CAL_1 }}&force=false" \
+      #     -H "Authorization: Bearer ${{ secrets.COOLIFY_DEPLOY_BEARER_SERVER_2 }}" \
+      #     -H "Content-Type: application/json"
