@@ -120,4 +120,8 @@ export const defineServer = () => {
 
 const server = defineServer();
 
-export default server;
+export default {
+  port: server.port,
+  fetch: server.fetch,
+  idleTimeout: 255,
+};
