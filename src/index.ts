@@ -114,14 +114,11 @@ export const defineServer = () => {
   return {
     idleTimeout: 255,
     port: 3001,
+    hostname: "0.0.0.0",
     fetch: app.fetch,
   };
 };
 
 const server = defineServer();
 
-export default {
-  port: server.port,
-  fetch: server.fetch,
-  idleTimeout: 255,
-};
+export default server;
