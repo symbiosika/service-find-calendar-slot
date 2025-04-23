@@ -113,7 +113,7 @@ export const defineServer = () => {
 
   return {
     idleTimeout: 255,
-    port: 3000,
+    port: 80,
     fetch: app.fetch,
   };
 };
