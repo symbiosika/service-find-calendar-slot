@@ -84,6 +84,13 @@ export const defineServer = () => {
     (c) => c.json({ online: true })
   );
 
+  /**
+   * Health check endpoint for Docker
+   */
+  app.get("/health", (c) => {
+    return c.json({ status: "ok" }, 200);
+  });
+
   // Calendar Routes
   defineCalendarRoutes(app);
 
