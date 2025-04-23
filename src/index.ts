@@ -4,6 +4,8 @@ import { logger } from "hono/logger";
 import { cors } from "hono/cors";
 import { resolver } from "hono-openapi/valibot";
 import * as v from "valibot";
+import { rateLimiter } from "hono-rate-limiter";
+import { nanoid } from "nanoid";
 
 /**
  * OpenAPI Docs
@@ -30,6 +32,27 @@ export const defineServer = () => {
       origin: "*",
     })
   );
+
+  app.use(
+    "/*",
+    rateLimiter({
+      windowMs: 15 * 60 * 1000, // 15 minutes
+      limit: 1000, // limit each IP to 100 requests per windowMs
+      standardHeaders: "draft-6", // draft-6: `RateLimit-*` headers; draft-7: combined `RateLimit` header
+      keyGenerator: (c) => nanoid(),
+    })
+  );
+
+  app.use("/*", async (c, next) => {
+    c.header("X-Content-Type-Options", "nosniff");
+    c.header("X-Frame-Options", "DENY");
+    c.header("X-XSS-Protection", "1; mode=block");
+    c.header(
+      "Strict-Transport-Security",
+      "max-age=31536000; includeSubDomains"
+    );
+    await next();
+  });
 
   /**
    * Ping endpoint
