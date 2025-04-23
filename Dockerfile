@@ -36,9 +36,9 @@ USER bunjs
 # Expose port (changed to 3000 to match your working version)
 EXPOSE 3001/tcp
 
-# Health check (simplified to just check if the process is running)
-# HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
-#     CMD ps aux | grep bun | grep -v grep || exit 1
+# Health check
+HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
+    CMD curl -f http://localhost:3001/api/v1/ping || exit 1
 
 # Start the application
 CMD ["bun", "run", "./dist/index.js"]
